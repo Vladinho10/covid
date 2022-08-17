@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import {
   VaccineTracker,
   VaccineTrackerDocument,
-} from './schemas/vaccine_tracker.schema';
+} from './schemas/vaccineTracker.schema';
 import { Model } from 'mongoose';
 import { VaccineParamDto } from './dto/vaccineParam.dto';
 import { SortEnum } from './enums/sort.enum';
@@ -16,7 +16,7 @@ export class VaccineTrackerService {
   ) {}
 
   async findAll(query: VaccineParamDto) {
-    let data = await this.vaccineTrackerModel
+    let vaccines = await this.vaccineTrackerModel
       .aggregate([
         {
           $match: {
@@ -37,50 +37,51 @@ export class VaccineTrackerService {
       ])
       .exec();
 
-    data = data.sort((a, b) => {
+    vaccines = vaccines.sort((a, b) => {
       return a['_id'].localeCompare(b['_id']);
     });
 
-    const d = data.map((item) => {
+    const d = vaccines.map((item) => {
       const { _id, ...doses } = item;
       let dosesSum = 0;
+
       for (const dose in doses) {
         dosesSum += doses[dose];
       }
       return {
-        week: item['_id'],
+        week: _id,
         dose: dosesSum,
       };
     });
 
-    const sliceIntoChunks = (arr, chunkSize, sort) => {
-      const res = [];
+    return this.sliceIntoChunks(d, query.rangeSize, query.sort);
+  }
 
-      for (let i = 0; i < arr.length; i += chunkSize) {
-        const chunk = arr.slice(i, i + chunkSize);
-        let dosesSum = 0;
+  private sliceIntoChunks(arr, chunkSize, sort) {
+    const res = [];
 
-        chunk.forEach((item) => {
-          const { week, dose } = item;
-          dosesSum += dose;
-        });
+    for (let i = 0; i < arr.length; i += chunkSize) {
+      const chunk = arr.slice(i, i + chunkSize);
+      let dosesSum = 0;
 
-        res.push({
-          weekStart: chunk[0].week,
-          weekEnd: chunk[chunk.length - 1].week,
-          NumberDosesReceived: dosesSum,
-        });
-      }
+      chunk.forEach((item) => {
+        const { dose } = item;
+        dosesSum += dose;
+      });
 
-      if (sort === SortEnum.NumberDosesReceived) {
-        res.sort((a, b) => {
-          return b['NumberDosesReceived'] - a['NumberDosesReceived'];
-        });
-      }
+      res.push({
+        weekStart: chunk[0].week,
+        weekEnd: chunk[chunk.length - 1].week,
+        NumberDosesReceived: dosesSum,
+      });
+    }
 
-      return res;
-    };
+    if (sort === SortEnum.NumberDosesReceived) {
+      res.sort((a, b) => {
+        return b['NumberDosesReceived'] - a['NumberDosesReceived'];
+      });
+    }
 
-    return sliceIntoChunks(d, query.rangeSize, query.sort);
+    return res;
   }
 }

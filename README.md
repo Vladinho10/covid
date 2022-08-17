@@ -1,73 +1,69 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Covid application
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+For run app you should firstly create mongodb two databases for test environment
+and for development environment. For that you need use this
+[Data source](https://www.ecdc.europa.eu/en/publications-data/data-covid-19-vaccination-eu-eea)
+to feed data in mongo.
+You need download in CSV and then import data into mongo using this
+bash terminal command:  `mongoimport --type csv -d databaseName -c collectionName --headerline --drop data.csv`
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### Technologies
 
-## Description
+Program/lib | version | command for checking\
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Node.js | v16.6.1 | `node -v` \
+Typescript | v^4.3.5 | `typescript -v` \
+Nest.js | v9.0.11 | `nest -v` \
+MongoDB | v4.4.5 | `mongo --version`\
+Mongoose | ^6.5.2 | see in this app package.json\
+Eslint | 8.0.1 | see in this app package.json\
 
-## Installation
+### Setup
 
-```bash
-$ npm install
-```
+1. Clone this repository\
+   `git clone https://github.com/Vladinho10/covid`
+2. Fill in your git credentials (if required)
+3. Enter the downloaded directory.\
+   `cd covid`
+4. You need create `.env` file by analogy `.env.example`
 
-## Running the app
+for npm
 
-```bash
-# development
-$ npm run start
+* install packages\
+  `npm i`
+* run server\
+  `npm run start`
+* if you want your server stay always running\
+  `npm run start:dev`
 
-# watch mode
-$ npm run start:dev
+for yarn
 
-# production mode
-$ npm run start:prod
-```
+* install packages\
+  `yarn`
+* run server\
+  `yarn run start`
+* if you want your server stay always running\
+  `yarn run start:dev`
 
-## Test
+# Covid API
 
-```bash
-# unit tests
-$ npm run test
+Request Description:
 
-# e2e tests
-$ npm run test:e2e
+GET /vaccine-summary
 
-# test coverage
-$ npm run test:cov
-```
+Query Parameters:\
+c, country code to get report for \
+dateFrom, yyyy-Www, eg. 2020-W10 (Including) \
+dateTo, yyyy-Www, eg, 2020-W20 (Excluding) \
+rangeSize, number, eg, the period for which to calculate metrics \
+sort, either by NumberDosesReceived[descending] or weekStart [ascending]
 
-## Support
+Request example \
+GET /vaccine-summary?c=AT&dateFrom=2020-W10&dateTo=2020-W53&range=5
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Covid API test running
 
-## Stay in touch
+For test running you must use `npm run test:e2e` terminal command
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
 
-Nest is [MIT licensed](LICENSE).

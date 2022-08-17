@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { VaccineTrackerController } from './vaccine_tracker.controller';
-import { VaccineTrackerService } from './vaccine_tracker.service';
+import { VaccineTrackerController } from './vaccineTracker.controller';
+import { VaccineTrackerService } from './vaccineTracker.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   VaccineTracker,
   VaccineTrackerSchema,
-} from './schemas/vaccine_tracker.schema';
+} from './schemas/vaccineTracker.schema';
 
 @Module({
   imports: [
