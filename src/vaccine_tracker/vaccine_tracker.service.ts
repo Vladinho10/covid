@@ -5,6 +5,8 @@ import {
   VaccineTrackerDocument,
 } from './schemas/vaccine_tracker.schema';
 import { Model } from 'mongoose';
+import { VaccineParamDto } from './dto/vaccineParam.dto';
+import { SortEnum } from './enums/sort.enum';
 
 @Injectable()
 export class VaccineTrackerService {
@@ -13,14 +15,14 @@ export class VaccineTrackerService {
     private vaccineTrackerModel: Model<VaccineTrackerDocument>,
   ) {}
 
-  async findAll() {
+  async findAll(query: VaccineParamDto) {
     let data = await this.vaccineTrackerModel
       .aggregate([
         {
           $match: {
-            YearWeekISO: { $gte: '2021-W45', $lte: '2021-W52' },
+            YearWeekISO: { $gte: query.dateFrom, $lte: query.dateTo },
             TargetGroup: 'ALL',
-            ReportingCountry: 'AT',
+            ReportingCountry: query.c,
           },
         },
         {
@@ -51,7 +53,7 @@ export class VaccineTrackerService {
       };
     });
 
-    const sliceIntoChunks = (arr, chunkSize) => {
+    const sliceIntoChunks = (arr, chunkSize, sort) => {
       const res = [];
 
       for (let i = 0; i < arr.length; i += chunkSize) {
@@ -70,9 +72,15 @@ export class VaccineTrackerService {
         });
       }
 
+      if (sort === SortEnum.NumberDosesReceived) {
+        res.sort((a, b) => {
+          return b['NumberDosesReceived'] - a['NumberDosesReceived'];
+        });
+      }
+
       return res;
     };
 
-    return sliceIntoChunks(d, 5);
+    return sliceIntoChunks(d, query.rangeSize, query.sort);
   }
 }

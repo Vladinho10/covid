@@ -1,15 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { User } from '../users/schemas/users.schema';
+import { Controller, Get, Query } from '@nestjs/common';
 import { VaccineTrackerService } from './vaccine_tracker.service';
-import { VaccineTracker } from './schemas/vaccine_tracker.schema';
+import { VaccineParamDto } from './dto/vaccineParam.dto';
+import {
+  VaccineDoseCountResult,
+  VaccineDoseResult,
+} from './results/vaccineDoseCount.result';
 
-@Controller('vaccine-tracker')
+@Controller('vaccine-summary')
 export class VaccineTrackerController {
   constructor(private vaccineTrackerService: VaccineTrackerService) {}
 
   @Get()
-  async findAll() {
-    return this.vaccineTrackerService.findAll();
+  async findAll(@Query() query: VaccineParamDto): Promise<VaccineDoseResult> {
+    const data = await this.vaccineTrackerService.findAll(query);
+    return new VaccineDoseCountResult(data);
   }
 }

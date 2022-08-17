@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { CountryCodeEnum } from '../enums/countryCode.enum';
+import { SortEnum } from '../enums/sort.enum';
 
 export type VaccineTrackerDocument = VaccineTracker & Document;
 
@@ -9,43 +11,46 @@ export class VaccineTracker {
   YearWeekISO: string;
 
   @Prop()
+  ReportingCountry: CountryCodeEnum;
+
+  @Prop()
+  Denominator: number;
+
+  @Prop()
+  NumberDosesReceived: SortEnum;
+
+  @Prop()
+  NumberDosesExported: SortEnum;
+
+  @Prop()
+  FirstDose: number;
+
+  @Prop()
+  FirstDoseRefused: string;
+
+  @Prop()
+  DoseAdditional1: number;
+
+  @Prop()
+  DoseAdditional2: number;
+
+  @Prop()
+  UnknownDose: number;
+
+  @Prop()
+  Region: CountryCodeEnum;
+
+  @Prop()
+  Population: number;
+
+  @Prop()
+  SecondDose: number;
+
+  @Prop()
   Vaccine: string;
 
   @Prop()
   TargetGroup: string;
-
-  @Prop()
-  ReportingCountry: string;
-
-  // @Prop()
-  // ReportingCountry: string;
-
-  // Denominator
-  // 7388778
-  // NumberDosesReceived
-  // 0
-  // NumberDosesExported
-  // 0
-  // FirstDose
-  // 0
-  // FirstDoseRefused
-  // ""
-  // SecondDose
-  // 0
-  // DoseAdditional1
-  // 0
-  // DoseAdditional2
-  // 0
-  // UnknownDose
-  // 8
-  // Region
-  // "AT"
-  // TargetGroup
-  // "ALL"
-  // Vaccine
-  // "UNK"
-  // Population
-  // 8901064
 }
 
 export const VaccineTrackerSchema =
